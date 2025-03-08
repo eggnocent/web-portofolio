@@ -148,7 +148,7 @@ export default function Component() {
         <section id="journey" className="py-20 flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 mb-10 md:mb-0">
             <Image
-              src="/placeholder.svg?height=400&width=400"
+              src="/profile/emogie.png?height=400&width=400"
               alt="About Me"
               width={400}
               height={400}
@@ -418,62 +418,62 @@ export default function Component() {
         </section>
 
         <section id="contact" className="py-16 md:py-24 px-4 relative overflow-hidden">
-          {/* Improved gradient background with better performance */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white via-emerald-100 to-white opacity-60 rounded-lg">
-            <div className="absolute inset-0 backdrop-blur-[2px]" />
+      {/* Reduced opacity for gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-emerald-100/50 to-white opacity-40 rounded-lg">
+        <div className="absolute inset-0 backdrop-blur-[1px]" />
+      </div>
+
+      {/* More transparent decorative elements */}
+      <div className="absolute top-10 left-10 w-20 h-20 bg-emerald-200/60 rounded-full opacity-20 blur-xl" />
+      <div className="absolute bottom-20 right-20 w-32 h-32 bg-emerald-300/60 rounded-full opacity-15 blur-xl" />
+
+      <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center text-center">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 text-emerald-800/90 leading-tight">
+          Every question is an opportunity to learn and grow together
+        </h2>
+
+        <p className="text-emerald-700/80 mb-8 max-w-xl">
+          Have a question or want to discuss something? Im here to help you find the answers youre looking for.
+        </p>
+
+        <a
+          href="https://linktr.ee/egiwiratama?utm_source=linktree_admin_share"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-emerald-600/90 hover:bg-emerald-700/90 text-white/95 px-8 py-3 rounded-full font-semibold transition-all hover:shadow-lg flex items-center gap-2 group"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 group-hover:animate-pulse"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+            />
+          </svg>
+          Ask Me Anything
+        </a>
+
+        <div className="mt-16 flex items-center gap-4">
+          <Image
+            src="/profile/emozie.png?height=60&width=60"
+            alt="Avatar"
+            width={60}
+            height={60}
+            className="rounded-full border-2 border-emerald-300/70 shadow-md"
+          />
+          <div className="text-left">
+            <p className="font-medium text-emerald-800/85">Ready to assist you</p>
+            <p className="text-sm text-emerald-600/80">Usually responds within 24 hours</p>
           </div>
-
-          {/* Decorative elements */}
-          <div className="absolute top-10 left-10 w-20 h-20 bg-emerald-200 rounded-full opacity-30 blur-xl" />
-          <div className="absolute bottom-20 right-20 w-32 h-32 bg-emerald-300 rounded-full opacity-20 blur-xl" />
-
-          <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center text-center">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 text-emerald-800 leading-tight">
-              Every question is an opportunity to learn and grow together
-            </h2>
-
-            <p className="text-emerald-700 mb-8 max-w-xl">
-              Have a question or want to discuss something? Im here to help you find the answers youre looking for.
-            </p>
-
-            <a
-  href="https://linktr.ee/egiwiratama?utm_source=linktree_admin_share"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-full font-semibold transition-all hover:shadow-lg flex items-center gap-2 group"
->
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5 group-hover:animate-pulse"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-    />
-  </svg>
-  Ask Me Anything
-</a>
-
-            <div className="mt-16 flex items-center gap-4">
-              <Image
-                src="/placeholder.svg?height=60&width=60"
-                alt="Avatar"
-                width={60}
-                height={60}
-                className="rounded-full border-2 border-emerald-300 shadow-md"
-              />
-              <div className="text-left">
-                <p className="font-medium text-emerald-800">Ready to assist you</p>
-                <p className="text-sm text-emerald-600">Usually responds within 24 hours</p>
-              </div>
-            </div>
-          </div>
-        </section>
+        </div>
+      </div>
+    </section>
       </main>
     </div>
   )
