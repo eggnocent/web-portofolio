@@ -3,7 +3,6 @@
 import type React from "react"
 
 import Image from "next/image"
-import { usePathname } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useInView } from "react-intersection-observer"
@@ -56,10 +55,8 @@ type SelectedItemType = (PortfolioProject | ExperienceItem | ExploreItem) & {
 
 // Define theme types
 type ThemeMode = "light" | "dark"
-type ThemeColor = "emerald" // We'll keep emerald as the default color
 
 export default function Component() {
-  const pathname = usePathname()
   const topRowRef = useRef<HTMLDivElement>(null)
   const bottomRowRef = useRef<HTMLDivElement>(null)
   const [isTopRowPaused, setIsTopRowPaused] = useState(false)
@@ -68,9 +65,9 @@ export default function Component() {
   const [selectedItem, setSelectedItem] = useState<SelectedItemType | null>(null)
   const [isTextLoading, setIsTextLoading] = useState(true)
   const [themeMode, setThemeMode] = useState<ThemeMode>("light")
-  const [themeColor, setThemeColor] = useState<ThemeColor>("emerald")
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState("home")
+  const themeColor: keyof typeof colorMap = "emerald";
   const [activeSkillCategory, setActiveSkillCategory] = useState<string>("all")
 
   // Add these refs and options for scroll animations - remove triggerOnce to allow re-animation
@@ -228,7 +225,7 @@ export default function Component() {
     {
       title: "Student & Item Management with Laravel 11",
       description: "A final project during my school days, with CRUD, PDF etc.",
-      imageUrl: "/portofolio/sb2.png?height=200&width=300",
+      imageUrl: "/portofolio/rapot.png?height=200&width=300",
       fullDescription:
         "This comprehensive student and item management system was built with Laravel 11, featuring complete CRUD operations, PDF generation for reports, user authentication with role-based access control, and a responsive dashboard interface. The system allows administrators to manage student records, track inventory items, generate detailed reports, and maintain an audit log of all activities.",
       technologies: ["Laravel 11", "MySQL", "Bootstrap", "JavaScript", "PDF Generation"],
@@ -568,14 +565,13 @@ export default function Component() {
   const DetailModal = ({
     item,
     onClose,
-    type,
   }: {
     item: SelectedItemType
     onClose: () => void
     type: "portfolio" | "experience" | "explore"
   }) => {
-    if (!item) return null
-
+    if (!item) return null;
+  
     return (
       <motion.div
         className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
@@ -585,16 +581,18 @@ export default function Component() {
         onClick={onClose}
       >
         <motion.div
-          className={`bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border ${colorMap[themeColor].border}`}
+          className={`bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border 
+            ${colorMap[themeColor]?.border ?? "border-gray-500"}`}
           initial={{ scale: 0.9, y: 20, opacity: 0 }}
           animate={{ scale: 1, y: 0, opacity: 1 }}
           exit={{ scale: 0.9, y: 20, opacity: 0 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
           onClick={(e) => e.stopPropagation()}
         >
+          {/* Tombol Close */}
           <div className="relative">
             <Image
-              src={type === "portfolio" ? item.imageUrl : type === "experience" ? item.logo : item.image}
+              src={(item as PortfolioProject).imageUrl || (item as ExperienceItem).logo || (item as ExploreItem).image}
               alt={item.title}
               width={800}
               height={400}
@@ -607,103 +605,94 @@ export default function Component() {
               <X className="h-5 w-5" />
             </button>
           </div>
-
+  
+          {/* Konten dalam Modal */}
           <div className="p-6">
-            <h3
-              className={`text-2  />
-            </button>
-          </div>
-
-          <div className="p-6">
-            <h3 className={\`text-2xl font-bold mb-2 ${colorMap[themeColor].primary}`}
-            >
+            <h3 className={`text-2xl font-bold mb-2 ${colorMap[themeColor]?.primary ?? "text-gray-800"}`}>
               {item.title}
             </h3>
-
-            {type === "experience" && (
+  
+            {/* Experience Section */}
+            {item.type === "experience" && "company" in item && "period" in item && (
               <div className="mb-4">
-                <p className={`font-medium ${colorMap[themeColor].tertiary}`}>{item.company}</p>
+                <p className={`font-medium ${colorMap[themeColor]?.tertiary ?? "text-gray-700"}`}>{item.company}</p>
                 <p className="text-gray-500 dark:text-gray-400">{item.period}</p>
               </div>
             )}
-
-            {type === "explore" && (
+  
+            {/* Explore Section */}
+            {item.type === "explore" && "difficulty" in item && (
               <div className="mb-4">
-                <span className={`inline-block ${colorMap[themeColor].tag} px-2 py-1 rounded-full text-xs font-medium`}>
+                <span className={`inline-block ${colorMap[themeColor]?.tag ?? "bg-gray-200"} px-2 py-1 rounded-full text-xs font-medium`}>
                   {item.difficulty}
                 </span>
               </div>
             )}
-
+  
+            {/* Deskripsi */}
             <div className="prose prose-emerald dark:prose-invert max-w-none mb-6">
               <p className="text-gray-700 dark:text-gray-300">{item.fullDescription}</p>
             </div>
-
-            {type === "portfolio" && (
-              <>
-                <div className="mb-6">
-                  <h4 className={`font-semibold ${colorMap[themeColor].secondary} mb-2`}>Technologies Used:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {item.technologies.map((tech: string, i: number) => (
-                      <span key={i} className={`${colorMap[themeColor].tag} px-3 py-1 rounded-full text-sm`}>
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {(item as PortfolioProject).demoUrl || (item as PortfolioProject).githubUrl ? (
-                  <div className="flex flex-wrap gap-3 mt-4">
-                    {(item as PortfolioProject).demoUrl && (
-                      <a
-                        href={(item as PortfolioProject).demoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`inline-flex items-center gap-2 ${colorMap[themeColor].bg} ${colorMap[themeColor].bgHover} text-white px-4 py-2 rounded-lg transition-colors`}
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        Live Demo
-                      </a>
-                    )}
-                    {(item as PortfolioProject).githubUrl && (
-                      <a
-                        href={(item as PortfolioProject).githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
-                      >
-                        <Github className="w-4 h-4" />
-                        View Code
-                      </a>
-                    )}
-                  </div>
-                ) : null}
-              </>
-            )}
-
-            {type === "experience" && (
+  
+            {/* Portfolio: Technologies */}
+            {item.type === "portfolio" && "technologies" in item && (
               <div className="mb-6">
-                <h4 className={`font-semibold ${colorMap[themeColor].secondary} mb-2`}>Key Achievements:</h4>
-                <ul className="list-disc pl-5 space-y-1 text-gray-700 dark:text-gray-300">
-                  {item.achievements.map((achievement: string, i: number) => (
-                    <li key={i}>{achievement}</li>
-                  ))}
-                </ul>
-
-                <h4 className={`font-semibold ${colorMap[themeColor].secondary} mt-4 mb-2`}>Technologies:</h4>
+                <h4 className={`font-semibold ${colorMap[themeColor]?.secondary ?? "text-gray-800"} mb-2`}>Technologies Used:</h4>
                 <div className="flex flex-wrap gap-2">
                   {item.technologies.map((tech: string, i: number) => (
-                    <span key={i} className={`${colorMap[themeColor].tag} px-3 py-1 rounded-full text-sm`}>
+                    <span key={i} className={`${colorMap[themeColor]?.tag ?? "bg-gray-200"} px-3 py-1 rounded-full text-sm`}>
                       {tech}
                     </span>
                   ))}
                 </div>
               </div>
             )}
-
-            {type === "explore" && (
+  
+            {/* Portfolio: Links */}
+            {(item as PortfolioProject).demoUrl || (item as PortfolioProject).githubUrl ? (
+              <div className="flex flex-wrap gap-3 mt-4">
+                {(item as PortfolioProject).demoUrl && (
+                  <a
+                    href={(item as PortfolioProject).demoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`inline-flex items-center gap-2 ${colorMap[themeColor]?.bg ?? "bg-gray-500"} 
+                    ${colorMap[themeColor]?.bgHover ?? "hover:bg-gray-600"} text-white px-4 py-2 rounded-lg transition-colors`}
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    Live Demo
+                  </a>
+                )}
+                {(item as PortfolioProject).githubUrl && (
+                  <a
+                    href={(item as PortfolioProject).githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  >
+                    <Github className="w-4 h-4" />
+                    View Code
+                  </a>
+                )}
+              </div>
+            ) : null}
+  
+            {/* Experience: Achievements */}
+            {item.type === "experience" && "achievements" in item && (
               <div className="mb-6">
-                <h4 className={`font-semibold ${colorMap[themeColor].secondary} mb-2`}>Topics Covered:</h4>
+                <h4 className={`font-semibold ${colorMap[themeColor]?.secondary ?? "text-gray-800"} mb-2`}>Key Achievements:</h4>
+                <ul className="list-disc pl-5 space-y-1 text-gray-700 dark:text-gray-300">
+                  {item.achievements.map((achievement: string, i: number) => (
+                    <li key={i}>{achievement}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+  
+            {/* Explore: Topics */}
+            {item.type === "explore" && "topics" in item && (
+              <div className="mb-6">
+                <h4 className={`font-semibold ${colorMap[themeColor]?.secondary ?? "text-gray-800"} mb-2`}>Topics Covered:</h4>
                 <ul className="list-disc pl-5 space-y-1 text-gray-700 dark:text-gray-300">
                   {item.topics.map((topic: string, i: number) => (
                     <li key={i}>{topic}</li>
@@ -711,11 +700,14 @@ export default function Component() {
                 </ul>
               </div>
             )}
-
+  
+            {/* Tombol Close */}
             <div className="flex justify-end">
               <button
                 onClick={onClose}
-                className={`${colorMap[themeColor].bg} ${colorMap[themeColor].bgHover} text-white px-4 py-2 rounded-lg transition-colors`}
+                className={`${colorMap[themeColor]?.bg ?? "bg-gray-500"} 
+                          ${colorMap[themeColor]?.bgHover ?? "hover:bg-gray-600"} 
+                          text-white px-4 py-2 rounded-lg transition-colors`}
               >
                 Close
               </button>
@@ -723,8 +715,9 @@ export default function Component() {
           </div>
         </motion.div>
       </motion.div>
-    )
-  }
+    );
+  };
+  
 
   // Theme selector component
   const ThemeSelector = () => {
@@ -1075,83 +1068,97 @@ export default function Component() {
         </motion.section>
 
         <motion.section
-          id="portfolio"
-          className="py-20"
-          ref={portfolioRef}
-          initial="hidden"
-          animate={portfolioInView ? "visible" : "hidden"}
-          variants={staggerContainer}
-        >
-          <motion.h2
-            className={`text-3xl font-bold text-center mb-10 ${colorMap[themeColor].primary}`}
-            variants={textLoadingVariants}
-            animate={isTextLoading ? "loading" : "loaded"}
-          >
-            Portfolio
-          </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {portfolioProjects.map((project, index) => (
-              <motion.div
-                key={index}
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105 cursor-pointer"
-                variants={itemFadeIn}
-                onClick={() => setSelectedItem({ ...project, type: "portfolio" })}
-              >
-                <div className="relative overflow-hidden">
-                  <Image
-                    src={project.imageUrl || "/placeholder.svg"}
-                    alt={`Project ${index + 1}`}
-                    width={300}
-                    height={200}
-                    className="w-full h-48 object-cover transition-transform duration-500 hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                    <div className="flex gap-2">
-                      {project.demoUrl && (
-                        <a
-                          href={project.demoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/40 transition-colors"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      )}
-                      {project.githubUrl && (
-                        <a
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/40 transition-colors"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Github className="w-4 h-4" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className={`font-bold mb-2 ${colorMap[themeColor].primary}`}>{project.title}</h3>
-                  <p className={`${colorMap[themeColor].tertiary} text-sm`}>{project.description}</p>
-                  <div className="mt-3 flex flex-wrap gap-1">
-                    {project.technologies.slice(0, 3).map((tech, i) => (
-                      <span key={i} className={`${colorMap[themeColor].tag} text-xs px-2 py-1 rounded-full`}>
-                        {tech}
-                      </span>
-                    ))}
-                    {project.technologies.length > 3 && (
-                      <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">
-                        +{project.technologies.length - 3}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
+  id="portfolio"
+  className="py-20"
+  ref={portfolioRef}
+  initial="hidden"
+  animate={portfolioInView ? "visible" : "hidden"}
+  variants={staggerContainer}
+>
+  {/* ✅ Tambahkan Judul My Project */}
+  <motion.h2
+    className="text-4xl font-bold text-center mb-12 text-gray-900 dark:text-white"
+    variants={textLoadingVariants}
+    animate={isTextLoading ? "loading" : "loaded"}
+  >
+    My Project
+  </motion.h2>
+
+  {/* ✅ Grid untuk Menampilkan Semua Proyek */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    {portfolioProjects.map((project, index) => (
+      <motion.div
+        key={index}
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105 cursor-pointer"
+        variants={itemFadeIn}
+        onClick={() => setSelectedItem({ ...project, type: "portfolio" })}
+      >
+        {/* Gambar Proyek */}
+        <div className="relative overflow-hidden">
+          <Image
+            src={project.imageUrl || "/placeholder.svg"}
+            alt={`Project ${index + 1}`}
+            width={300}
+            height={200}
+            className="w-full h-48 object-cover transition-transform duration-500 hover:scale-110"
+          />
+        </div>
+
+        {/* Deskripsi Proyek */}
+        <div className="p-5">
+          <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+            {project.title}
+          </h3>
+          <p className="text-gray-600 dark:text-gray-300 text-sm">
+            {project.description}
+          </p>
+
+          {/* Teknologi yang Digunakan */}
+          <div className="mt-3 flex flex-wrap gap-1">
+            {project.technologies.slice(0, 3).map((tech, i) => (
+              <span key={i} className="bg-gray-200 dark:bg-gray-700 text-xs px-3 py-1 rounded-full">
+                {tech}
+              </span>
             ))}
+            {project.technologies.length > 3 && (
+              <span className="text-xs px-3 py-1 bg-gray-300 dark:bg-gray-600 rounded-full">
+                +{project.technologies.length - 3}
+              </span>
+            )}
           </div>
-        </motion.section>
+
+          {/* Tombol Link untuk Demo & GitHub */}
+          <div className="flex flex-wrap gap-3 mt-4">
+            {project.demoUrl && (
+              <a
+                href={project.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Live Demo
+              </a>
+            )}
+            {project.githubUrl && (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                <Github className="w-4 h-4" />
+                View Code
+              </a>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    ))}
+  </div>
+</motion.section>
+
+
 
         <motion.section
           id="certifications"
@@ -1188,21 +1195,23 @@ export default function Component() {
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <div className="transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                    <button
-                      className={`bg-white text-gray-800 dark:bg-gray-800 dark:text-white px-4 py-2 rounded-full font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors`}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setSelectedItem({
-                          title: cert.name,
-                          imageUrl: cert.src,
-                          fullDescription: `This is my ${cert.name} that demonstrates my expertise and commitment to professional growth.`,
-                          technologies: ["Backend Development", "System Engineering"],
-                          type: "portfolio",
-                        })
-                      }}
-                    >
-                      View Details
-                    </button>
+                  <button
+                    className={`bg-white text-gray-800 dark:bg-gray-800 dark:text-white px-4 py-2 rounded-full font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors`}
+                    onClick={(e) => {
+                    e.stopPropagation()
+                    setSelectedItem({
+                      title: cert.name,
+                      description: "Certificate of achievement", // ✅ Tambahkan deskripsi
+                      imageUrl: cert.src,
+                      fullDescription: `This is my ${cert.name} that demonstrates my expertise and commitment to professional growth.`,
+                      technologies: ["Backend Development", "System Engineering"],
+                      type: "portfolio",
+                    })
+                  }}
+                  >
+                  View Details  
+                  </button>
+
                   </div>
                 </div>
               </motion.div>
@@ -1219,22 +1228,24 @@ export default function Component() {
               />
               <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                 <div className="transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                  <button
-                    className={`bg-white text-gray-800 dark:bg-gray-800 dark:text-white px-4 py-2 rounded-full font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors`}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setSelectedItem({
-                        title: "CCNA Certificate",
-                        imageUrl: "/certificate/ccna.png",
-                        fullDescription:
-                          "This CCNA certification validates my knowledge of networking fundamentals, including network access, IP connectivity, security basics, and automation and programmability.",
-                        technologies: ["Networking", "Cisco", "IT Infrastructure"],
-                        type: "portfolio",
-                      })
-                    }}
-                  >
-                    View Details
-                  </button>
+                <button
+                  className={`bg-white text-gray-800 dark:bg-gray-800 dark:text-white px-4 py-2 rounded-full font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors`}
+                  onClick={(e) => {
+                  e.stopPropagation()
+                  setSelectedItem({
+                    title: "CCNA Certificate",
+                    description: "Official Cisco CCNA Certification", // ✅ Tambahkan deskripsi
+                    imageUrl: "/certificate/ccna.png",
+                    fullDescription:
+                      "This CCNA certification validates my knowledge of networking fundamentals, including network access, IP connectivity, security basics, and automation and programmability.",
+                    technologies: ["Networking", "Cisco", "IT Infrastructure"],
+                    type: "portfolio",
+                  })
+                }}
+              >
+                View Details
+              </button>
+
                 </div>
               </div>
             </div>
@@ -1378,7 +1389,7 @@ export default function Component() {
               variants={textLoadingVariants}
               animate={isTextLoading ? "loading" : "loaded"}
             >
-              Have a question or want to discuss something? I'm here to help you find the answers you're looking for.
+              Have a question or want to discuss something? Im here to help you find the answers youre looking for.
             </motion.p>
 
             <motion.a
@@ -1486,4 +1497,3 @@ export default function Component() {
     </div>
   )
 }
-

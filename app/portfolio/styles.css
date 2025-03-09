@@ -3,26 +3,16 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --color-primary: 20 184 166;
-    --color-primary-foreground: 255 255 255;
-    --color-secondary: 15 118 110;
-    --color-secondary-foreground: 255 255 255;
-
-    --card-bg: 255 255 255;
-    --card-border: 240 240 245;
-    --card-highlight: 248 248 252;
-  }
-
   .dark {
-    --color-primary: 20 184 166;
-    --color-primary-foreground: 255 255 255;
-    --color-secondary: 45 212 191;
-    --color-secondary-foreground: 0 0 0;
-
     --card-bg: 23 23 28;
     --card-border: 38 38 45;
     --card-highlight: 45 45 55;
+  }
+
+  .light {
+    --card-bg: 255 255 255;
+    --card-border: 240 240 245;
+    --card-highlight: 248 248 252;
   }
 }
 
@@ -75,8 +65,4 @@
            transition-all 
            duration-200;
   }
-}
-
-body {
-  @apply antialiased;
 }

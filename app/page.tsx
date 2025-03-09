@@ -1,9 +1,5 @@
-import Component from './components/component';
+import { redirect } from "next/navigation"
 
 export default function Home() {
-  return (
-    <div>
-      <Component />
-    </div>
-  );
+  redirect("/portfolio")
 }
